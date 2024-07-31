@@ -2,25 +2,17 @@ package com.example.iphonepro.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -30,13 +22,34 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity
 //@EnableOAuth2Sso
-public class SecurityConfig  {
+public class SecurityConfig extends WebSecurityConfiguration {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    MyUserDetailService userDetailsService;
+//
+//@Autowired
+//    JwtRequestFilter jwtRequestFilter;
 
 
-//************  cheaking credentials in database with default loginpage  ****************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //************  cheaking credentials in database   ****************************
+
+
     @Bean
     AuthenticationProvider authprovider() {
 //        System.out.println("\n ->  SecurityConfig.authprovideer() ///  called by spring");
@@ -48,15 +61,12 @@ public class SecurityConfig  {
 
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(new BCryptPasswordEncoder());
-       // provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        // provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
         return provider;
     }
 
 
-
-
-
-//************ cheaking credentials in inmemory with default loginpage ****************************
+//************ cheaking credentials in inmemory database e ****************************
 
 //    @Bean
 //    public UserDetailsService UserDetailsService() {
@@ -76,19 +86,28 @@ public class SecurityConfig  {
 
 // ******** cheaking credentials in DB with browser with ALERT no login form (view) *******************
 
+
+
+
+
+
+
+
+
+
+
     @Bean
     SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
-      http.authorizeHttpRequests((requests) -> requests
+        http.authorizeHttpRequests((requests) -> requests
 //                .requestMatchers("/login2").permitAll()
 //                .anyRequest().authenticated()
 
-                      .anyRequest().authenticated()
+                        .anyRequest().authenticated()
 //        ).formLogin((login)->login.loginPage("/login2")
 //              .defaultSuccessUrl("/getjsp",true)
 //              .permitAll()
 
-      );
-
+        );
 
 
 // i used ->               .sessionManagement(session -> session
@@ -100,7 +119,7 @@ public class SecurityConfig  {
         );
 
         http.httpBasic(withDefaults());
-
+//default login page
         //        http.formLogin(withDefaults());
 
         return http.build();
@@ -108,7 +127,39 @@ public class SecurityConfig  {
 
 
 
-// Will Execute This  ->  http://localhost:8080/login2?username=niraj&password=niraj@123
+//jwt :-
+//
+//
+//@Bean
+//AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//       return authenticationConfiguration.getAuthenticationManager();
+//}
+//
+//
+//    @Bean
+//    SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(authorise -> authorise
+//                        .requestMatchers("/authenticate").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .sessionManagement(session -> session
+//                       .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        http.addFilterBefore(jwtRequestFilter , UsernamePasswordAuthenticationFilter.class);
+//        return http.build();
+//    }
+//
+
+
+
+
+
+
+
+
+
+
+    // Will Execute This  ->  http://localhost:8080/login2?username=niraj&password=niraj@123
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Bean
     public PasswordEncoder passwordEncoder() {

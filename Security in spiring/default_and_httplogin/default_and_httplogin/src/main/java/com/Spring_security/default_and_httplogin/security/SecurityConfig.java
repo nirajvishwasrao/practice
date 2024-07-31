@@ -1,0 +1,122 @@
+package com.Spring_security.default_and_httplogin.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.Customizer.withDefaults;
+
+
+@Configuration
+@EnableWebSecurity
+//@EnableMethodSecurity
+//@EnableOAuth2Sso
+public class SecurityConfig  {
+
+    @Autowired
+  MyUserDetailService userDetailsService;
+
+
+    //************  cheaking credentials in database   ****************************
+
+
+    @Bean
+    AuthenticationProvider authprovider() {
+//        System.out.println("\n ->  SecurityConfig.authprovideer() ///  called by spring");
+
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+
+//        System.out.println(" ->  cheaks the object of type userdetailservice injected here and " +
+//                " method called (when we press submit) internally Ex. myuserdetailservice.loadUserByUsername()  \n");
+
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        // provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        return provider;
+    }
+
+    //for login page / default login page / http basic defaults
+
+    @Bean
+    SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(
+                (requests) -> requests
+                .requestMatchers("/Login.jsp").permitAll()
+                .anyRequest().authenticated()
+                  //      .anyRequest().authenticated()
+        );
+//                .formLogin(
+//                        (login)->login.loginPage("/Login.jsp")
+////                                .loginProcessingUrl("/login2")
+//
+//                                .defaultSuccessUrl("/getjsp",true)
+//              //.permitAll()
+//        );
+
+
+// /*i used ->*/             .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                );
+// Enable CSRF protection
+        http.csrf(csrf -> csrf
+                .ignoringRequestMatchers("/savedetails")
+        );
+
+        http.httpBasic(withDefaults());
+//default login page
+             //  http.formLogin(withDefaults());
+
+        return http.build();
+    }
+
+
+
+
+
+
+
+
+
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+
+
+//************ cheaking credentials in inmemory database e ****************************
+
+//    @Bean
+//    public UserDetailsService UserDetailsService() {
+//
+//        UserDetails user = User.withUsername("niraj")
+//                .password(passwordEncoder().encode("niraj@1234"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        UserDetails admin = User.withUsername("admin")
+//                .password(passwordEncoder().encode("admin"))
+//                .roles("USER")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user,admin);
+//    }
+
+// ******** cheaking credentials in DB with browser with ALERT no login form (view) *******************
+
+
+}
