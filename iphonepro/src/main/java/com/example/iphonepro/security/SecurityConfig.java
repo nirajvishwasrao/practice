@@ -20,36 +20,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-//@EnableOAuth2Sso
-public class SecurityConfig extends WebSecurityConfiguration {
+public class SecurityConfig {
 
     @Autowired
     MyUserDetailService userDetailsService;
-//
-//@Autowired
-//    JwtRequestFilter jwtRequestFilter;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //************  cheaking credentials in database   ****************************
-
-
+  //************  cheaking credentials in database   ****************************
     @Bean
     AuthenticationProvider authprovider() {
 //        System.out.println("\n ->  SecurityConfig.authprovideer() ///  called by spring");
@@ -84,17 +61,12 @@ public class SecurityConfig extends WebSecurityConfiguration {
 //        return new InMemoryUserDetailsManager(user,admin);
 //    }
 
+
+
+
+
+
 // ******** cheaking credentials in DB with browser with ALERT no login form (view) *******************
-
-
-
-
-
-
-
-
-
-
 
     @Bean
     SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
@@ -126,41 +98,8 @@ public class SecurityConfig extends WebSecurityConfiguration {
     }
 
 
+//possword encoder
 
-//jwt :-
-//
-//
-//@Bean
-//AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//       return authenticationConfiguration.getAuthenticationManager();
-//}
-//
-//
-//    @Bean
-//    SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
-//        http.csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(authorise -> authorise
-//                        .requestMatchers("/authenticate").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .sessionManagement(session -> session
-//                       .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        http.addFilterBefore(jwtRequestFilter , UsernamePasswordAuthenticationFilter.class);
-//        return http.build();
-//    }
-//
-
-
-
-
-
-
-
-
-
-
-    // Will Execute This  ->  http://localhost:8080/login2?username=niraj&password=niraj@123
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
